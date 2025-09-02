@@ -1,0 +1,21 @@
+type Product {
+    id: ID!
+    name: String!
+    description: String
+    price: Float!
+}
+
+type Query {
+    productById(id: ID!): Product
+    products: [Product!]!
+}
+
+type Mutation {
+    saveProduct(product: ProductInput!): Product!
+}
+
+input ProductInput {
+    name: String!
+    description: String
+    price: Float!
+}
