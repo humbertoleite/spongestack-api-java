@@ -11,10 +11,10 @@ import java.util.Map;
 public class HomeController {
     
     @GetMapping("/")
-    public Mono<Map<String, Object>> home() {
+    public Map<String, Object> home() {
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Welcome to SpongeStack API!");
         response.put("status", "OK");
-        return Mono.just(response);
+        return response;
     }
 }
