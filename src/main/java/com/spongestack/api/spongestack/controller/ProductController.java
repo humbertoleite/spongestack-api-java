@@ -5,12 +5,11 @@ import java.util.List;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-
 
 import com.spongestack.api.spongestack.entity.Product;
 import com.spongestack.api.spongestack.entity.Status;
-import com.spongestack.api.spongestack.service.JpaProductService;
 import com.spongestack.api.spongestack.service.ProductService;
 
 @Controller
@@ -18,7 +17,7 @@ public class ProductController {
    
     private final ProductService productService;
 
-    public ProductController(JpaProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -33,26 +32,31 @@ public class ProductController {
     }
     
     @MutationMapping("saveProduct")
+    @Secured("ROLE_ADMIN")
     public Product saveProduct(@Argument Product product) {
-        System.out.println("Saving product: " + product); // Debug log
-        Product savedProduct = productService.saveProduct(product);
-        System.out.println("Saved product: " + savedProduct); // Debug log
-        return savedProduct;
+        return productService.saveProduct(product);
     }
-
+    
     @MutationMapping("deleteProduct")
+    @Secured("ROLE_ADMIN")
     public Status deleteProduct(@Argument Long id) {
-        System.out.println("Deleting product with id: " + id);
         try {
             if (productService.getProductById(id) == null) {
-                return new Status("not found", false);
+                return Status.builder()
+                        .success(false)
+                        .message("Product not found")
+                        .build();
             }
             productService.deleteProduct(id);
-            System.out.println("Product deleted successfully");
-            return new Status("Product deleted successfully", true);
+            return Status.builder()
+                    .success(true)
+                    .message("Product deleted successfully")
+                    .build();
         } catch (Exception e) {
-            System.out.println("Error deleting product: " + e.getMessage());
-            return new Status("Error: " + e.getMessage(), false);
+            return Status.builder()
+                    .success(false)
+                    .message("Error: " + e.getMessage())
+                    .build();
         }
     }
 }
