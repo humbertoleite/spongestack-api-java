@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 
 
 import com.spongestack.api.spongestack.entity.Product;
+import com.spongestack.api.spongestack.entity.Status;
 import com.spongestack.api.spongestack.service.JpaProductService;
 import com.spongestack.api.spongestack.service.ProductService;
 
@@ -37,5 +38,21 @@ public class ProductController {
         Product savedProduct = productService.saveProduct(product);
         System.out.println("Saved product: " + savedProduct); // Debug log
         return savedProduct;
+    }
+
+    @MutationMapping("deleteProduct")
+    public Status deleteProduct(@Argument Long id) {
+        System.out.println("Deleting product with id: " + id);
+        try {
+            if (productService.getProductById(id) == null) {
+                return new Status("not found", false);
+            }
+            productService.deleteProduct(id);
+            System.out.println("Product deleted successfully");
+            return new Status("Product deleted successfully", true);
+        } catch (Exception e) {
+            System.out.println("Error deleting product: " + e.getMessage());
+            return new Status("Error: " + e.getMessage(), false);
+        }
     }
 }

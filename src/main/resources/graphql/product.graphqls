@@ -4,7 +4,10 @@ type Product {
     description: String
     price: Float!
 }
-
+type Status {
+    message: String!
+    success: Boolean!
+}
 type Query {
     productById(id: ID!): Product
     products: [Product!]!
@@ -12,6 +15,7 @@ type Query {
 
 type Mutation {
     saveProduct(product: ProductInput!): Product!
+    deleteProduct(id: ID!): Status!
 }
 
 input ProductInput {
